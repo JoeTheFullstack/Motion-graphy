@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ارائه جامع گیلان‌زی - توسعه گردشگری پایدار و اقتصاد چرخشی</title>
+    <style>
+        :root {
+            --primary-color: #1b4332;
+            --primary-light: #2d6a4f;
+            --accent-green: #52b788;
+            --accent-gold: #d4af37;
+            --dark-bg: #081c15;
+            --card-bg: rgba(255, 255, 255, 0.94);
+            --text-color: #1a252c;
+            --text-muted: #4a5568;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'B Nazanin', Tahoma, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .presentation-container {
+            position: relative;
+            z-index: 10;
+            width: 92%;
+            max-width: 1150px;
+            height: 88vh;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 25px rgba(82, 183, 136, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 45px;
+            overflow: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(45, 106, 79, 0.2);
+            padding-bottom: 12px;
+        }
+
+        .brand-title {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-title span {
+            color: var(--accent-gold);
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--primary-light);
+            background: rgba(82, 183, 136, 0.15);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(82, 183, 136, 0.4);
+        }
+
+        .slides-wrapper {
+            position: relative;
+            flex: 1;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.98);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .slide-content h2 {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 14px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .slide-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+        }
+
+        .slide-content p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-color);
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .highlight-quote {
+            font-weight: 700;
+            color: var(--primary-color);
+            background: rgba(82, 183, 136, 0.12);
+            padding: 10px 14px;
+            border-right: 4px solid var(--accent-green);
+            border-radius: 6px;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .slide-content ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .slide-content ul li {
+            font-size: 1.02rem;
+            line-height: 1.75;
+            position: relative;
+            padding-right: 26px;
+            margin-bottom: 6px;
+            color: var(--text-color);
+        }
+
+        .slide-content ul li::before {
+            content: '🌿';
+            position: absolute;
+            right: 0;
+            top: 1px;
+            font-size: 1rem;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .badge-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(82, 183, 136, 0.3);
+            border-right: 4px solid var(--accent-green);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .badge-card strong {
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-right: 5px solid var(--primary-color);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 1.05rem;
+        }
+
+        .stat-box strong {
+            color: var(--primary-color);
+        }
+
+        .slide-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 340px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+            border: 3px solid white;
+        }
+
+        .slide-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease-out;
+        }
+
+        .slide.active .slide-image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            padding-top: 12px;
+        }
+
+        .progress-bar-container {
+            width: 45%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 16.66%;
+            background: linear-gradient(90deg, var(--accent-green), var(--primary-color));
+            transition: width 0.4s ease;
+        }
+
+        .slide-counter {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 9px 24px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--dark-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(8, 28, 21, 0.4);
+        }
+
+        button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .slide.active .anim-item {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="presentation-container">
+        <header>
+            <div class="brand-title">
+                🍃 گیلان‌زی <span>| پلتفرم جامع گردشگری پایدار</span>
+            </div>
+            <div class="subtitle">
+                الگوی بومی پیوند گردشگری سبز، کشاورزی پایدار و اقتصاد چرخشی
+            </div>
+        </header>
+
+        <div class="slides-wrapper">
+
+            <!-- اسلاید ۱: معرفی و هدف کلان -->
+            <div class="slide active">
+                <div class="slide-content">
+                    <h2 class="anim-item">هدف و چشم‌انداز کلان گیلان‌زی</h2>
+                    <p class="highlight-quote anim-item">
+                        «توسعه گردشگری پایدار و طبیعت‌محور در گیلان با بهره‌گیری از ظرفیت‌های طبیعی، کشاورزی و فرهنگی برای ایجاد اشتغال پایدار و ارتقای فرهنگ محیط‌زیست.»
+                    </p>
+                    <p class="anim-item">
+                        <strong>بیان مسئله اصلی:</strong> نبود یک الگوی یکپارچه برای پیوند گردشگری، کشاورزی پایدار و مدیریت پسماند با هدف ایجاد ارزش اقتصادی و حفظ طبیعت در گیلان.
+                    </p>
+                </div>
+                <div class="slide-image-wrapper">
+                    <!-- عکس اختصاصی: جنگل‌های هیرکانی و سرسبزی گیلان -->
+                    <img src="https://images.unsplash.com/photo-1511497584788-876761c11969?auto=format&fit=crop&w=1000&q=80" alt="طبیعت بکر و جنگل‌های گیلان">
+                </div>
+            </div>
+
+            <!-- اسلاید ۲: سه رکن اساسی -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="anim-item">ارکان سه گانه طرح</h2>
+                    <p class="anim-item">گیلان‌زی بر پایه‌سه‌محور عملیاتی، پسماند را به ثروت و طبیعت را به فرصت اقتصادی تبدیل می‌کند:</p>
+                    <ul>
+                        <li class="anim-item"><strong>اقتصاد چرخشی:</strong> تبدیل پسماندهای آلی به کمپوست باارزش و جلوگیری از هدررفت منابع.</li>
+                        <li class="anim-item"><strong>گردشگری سبز:</strong> خلق تجربه زنده از زندگی در طبیعت به همراه آموزش و مشارکت فعال گردشگران.</li>
+                        <li class="anim-item"><strong>توسعه کسب‌وکارهای محلی:</strong> ایجاد درآمد مستقیم برای جامعه بومی از طریق همکاری با کشاورزان.</li>
+                    </ul>
+                </div>
+                <div class="slide-image-wrapper">
+                    <!-- عکس اختصاصی: کشاورزی چرخشی و کشت سبز -->
+                    <img src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=1000&q=80" alt="کشاورزی ارگانیک و اقتصاد چرخشی">
+                </div>
+            </div>
+
+            <!-- اسلاید ۳: پاسخ به نیازها و محیط‌های اجرا -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="anim-item">پاسخ به نیازها و قابلیت گسترش</h2>
+                    <p class="anim-item">پاسخ‌گویی به تجربه سلامت گردشگران، نیاز کشاورزان به کود طبیعی و تضمین محیط‌زیست پاک برای جامعه.</p>
+                    <p class="anim-item"><strong>فضاهای قابل اجرا:</strong></p>
+                    <ul>
+                        <li class="anim-item">اقامتگاه‌های بوم‌گردی و مراكز گردشگری.</li>
+                        <li class="anim-item">مزارع، باغ‌های کشاورزی و کارگاه‌های آموزشی.</li>
+                        <li class="anim-item">مراكز پردازش پسماند و فروشگاه‌های محصولات بومی.</li>
+                    </ul>
+                </div>
+                <div class="slide-image-wrapper">
+                    <!-- عکس اختصاصی: اقامتگاه سنتی و بوم‌گردی -->
+                    <img src="https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=1000&q=80" alt="اقامتگاه بوم گردی و زندگی در طبیعت">
+                </div>
+            </div>
+
+            <!-- اسلاید ۴: تفکیک مشتریان و بازار هدف -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="anim-item">تفکیک مخاطبان و بازار هدف</h2>
+                    <div class="badge-grid anim-item">
+                        <div class="badge-card">
+                            <strong>🎯 مشتریان اصلی:</strong>
+                            گردشگران، اقامتگاه‌های بوم‌گردی، کشاورزان و باغداران محلی.
+                        </div>
+                        <div class="badge-card">
+                            <strong>🌱 مشتریان مکمل:</strong>
+                            رستوران‌ها، خانواده‌ها، مراکز آموزشی و فروشگاه‌های ارگانیک.
+                        </div>
+                    </div>
+                    <p class="anim-item" style="margin-top: 12px;">
+                        <strong>چشم‌انداز بازار:</strong> آغاز از استان گیلان و سپس الگوسازی برای سراسر کشور به عنوان برند پیشرو در اقتصاد سبز.
+                    </p>
+                </div>
+                <div class="slide-image-wrapper">
+                    <!-- عکس اختصاصی: گردشگران و تعامل با محصولات ارگانیک -->
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=80" alt="محصولات محلی و بازار ارگانیک">
+                </div>
+            </div>
+
+            <!-- اسلاید ۵: مدل درآمدی ۵ گانه -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="anim-item">مدل درآمدزایی ۵ گانه پایدار</h2>
+                    <p class="anim-item">تنوع در کانال‌های درآمدی، وابستگی به فصل گردشگری را از بین می‌برد:</p>
+                    <ul>
+                        <li class="anim-item">درآمد حاصل از گردشگری، اقامت و تورهای سبز.</li>
+                        <li class="anim-item">فروش خاک، کمپوست و ورمی‌کمپوست غنی‌شده.</li>
+                        <li class="anim-item">ارائه خدمات مدیریت و بازیافت پسماند آلی.</li>
+                        <li class="anim-item">عرضه و فروش محصولات کشاورزی و بومی.</li>
+                        <li class="anim-item">برگزاری کارگاه‌های تخصصی و دوره‌های آموزشی.</li>
+                    </ul>
+                </div>
+                <div class="slide-image-wrapper">
+                    <!-- عکس اختصاصی: خاک کمپوست ارگانیک و تولید -->
+                    <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1000&q=80" alt="کود کمپوست ارگانیک و خاک غنی">
+                </div>
+            </div>
+
+            <!-- اسلاید ۶: فاز پایلوت و بودجه -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="anim-item">فاز پایلوت و برآورد مالی</h2>
+                    <p class="anim-item"><strong>دوره آزمایشی ۳ ماهه:</strong> اجرا در یک اقامتگاه بوم‌گردی همراه با پایش کاهش زباله و سنجش کیفیت کمپوست.</p>
+                    <div class="stat-box anim-item">
+                        <strong>سرمایه فاز پایلوت:</strong> ۲۰۵ تا ۳۴۰ میلیون تومان (شامل دستگاه خردکن، مخازن هوادهی، ابزار سنجش، آموزش و زیرساخت).
+                    </div>
+                </div>
+                <div class="slide-image-wrapper">
+                    <!-- عکس اختصاصی: زیرساخت، ابزارها و توسعه طرح -->
+                    <img src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1000&q=80" alt="تجهیزات و توسعه پایدار">
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="slide-counter" id="slide-counter">اسلاید ۱ از ۶</div>
+            <div class="controls">
+                <button id="prevBtn" onclick="moveSlide(-1)" disabled>قبلی</button>
+                <button id="nextBtn" onclick="moveSlide(1)">بعدی</button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progress-bar');
+        const slideCounter = document.getElementById('slide-counter');
+
+        function moveSlide(direction) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide += direction;
+
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+
+            slides[currentSlide].classList.add('active');
+
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.textContent = currentSlide === slides.length - 1 ? 'پایان ارائه' : 'بعدی';
+            
+            const progressPercent = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progressPercent + '%';
+            slideCounter.textContent = `اسلاید ${currentSlide + 1} از ${slides.length}`;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') moveSlide(1);
+            if (e.key === 'ArrowRight') moveSlide(-1);
+        });
+
+        // افکت ذرات موشن‌گرافی پس‌زمینه
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particles = [];
+        const particleCount = 50;
+
+        class LeafParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 0.8 - 0.4;
+                this.speedY = Math.random() * 0.7 + 0.3;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = (Math.random() - 0.5) * 0.02;
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += Math.sin(this.angle) * 0.5;
+                this.angle += this.spin;
+
+                if (this.y < -10) {
+                    this.y = canvas.height + 10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = `rgba(82, 183, 136, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new LeafParticle());
+        }
+
+        function animateBg() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+    </script>
+</body>
+</html>
